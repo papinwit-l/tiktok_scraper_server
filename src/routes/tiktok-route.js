@@ -4,14 +4,8 @@ const tiktokRoute = express.Router();
 const authenticate = require("../middlewares/authenticate");
 const tiktokController = require("../controllers/tiktok-controller");
 
-tiktokRoute.post("/get-posts-tags", tiktokController.getPostsFromTags);
 tiktokRoute.get("/get-tags-list", tiktokController.getTagsList);
 tiktokRoute.post("/list-users-by-tag", tiktokController.listUsersByTag);
-tiktokRoute.post(
-  "/all-user-info-by-tags",
-  tiktokController.getAllUserInfoByTags
-);
-tiktokRoute.post("/get-user-info", tiktokController.getAllUserInfoByUser);
 tiktokRoute.post("/update-tag-users", tiktokController.updateTagUsers);
 tiktokRoute.post("/get-tag-sync-history", tiktokController.getTagSyncHistory);
 tiktokRoute.post(
