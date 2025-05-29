@@ -20,6 +20,8 @@ tiktokRoute.post(
 // tiktokRoute.post("/put-data-sync", tiktokController.putDataSync);
 tiktokRoute.post("/update-user-data", tiktokController.updateUserData);
 tiktokRoute.post("/update-all-user-data", tiktokController.updateAllUserData);
+tiktokRoute.get("/list-all-users", tiktokController.listAllUsers);
+
 tiktokRoute.post("/test-tag", tiktokController.testTag);
 
 module.exports = tiktokRoute;

@@ -427,6 +427,7 @@ module.exports.updateUserData = async (req, res, next) => {
         followers: userData.followers,
         following: userData.following,
         likes: userData.likes,
+        avatar: userData.avatar,
         updated_at: new Date(),
       },
     });
@@ -461,6 +462,21 @@ module.exports.testTag = async (req, res, next) => {
             tag_id: 6,
           },
         },
+      },
+    });
+    res.json(allUser);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+module.exports.listAllUsers = async (req, res, next) => {
+  try {
+    const allUser = await prisma.tiktokUser.findMany({
+      select: {
+        id: true,
+        username: true,
       },
     });
     res.json(allUser);
