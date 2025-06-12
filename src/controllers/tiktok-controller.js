@@ -1,4 +1,5 @@
 const prisma = require("../config/prima");
+const { exportToGoogleSheet } = require("../utils/googleSheets");
 
 module.exports.getTagsList = async (req, res, next) => {
   try {
@@ -480,6 +481,75 @@ module.exports.listAllUsers = async (req, res, next) => {
       },
     });
     res.json(allUser);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+function convertToNumber(inputValue) {
+  let result = 0;
+  if (inputValue) {
+    const num = parseFloat(inputValue.replace(/[KMB]/g, ""));
+    if (inputValue.includes("K")) {
+      result = num * 1000;
+    } else if (inputValue.includes("M")) {
+      result = num * 1000000;
+    } else if (inputValue.includes("B")) {
+      result = num * 1000000000;
+    } else {
+      result = num;
+    }
+  }
+  return result;
+}
+
+module.exports.getDataForExport = async (req, res, next) => {
+  try {
+    const allTags = await prisma.tiktokTag.findMany({
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+
+    const allUserData = [];
+
+    for (const tag of allTags) {
+      const allUser = await prisma.tiktokUser.findMany({
+        where: {
+          TiktokUserTag: {
+            some: {
+              tag_id: tag.id,
+            },
+          },
+        },
+      });
+
+      const formattedUserData = allUser.map((user) => ({
+        ...user,
+        followers: convertToNumber(user.followers),
+        following: convertToNumber(user.following),
+        likes: convertToNumber(user.likes),
+      }));
+      allUserData.push({
+        tag: tag.name,
+        users: formattedUserData,
+      });
+    }
+
+    //filter out users with less than 3000 followers
+    allUserData.forEach((tagData) => {
+      tagData.users = tagData.users.filter((user) => {
+        const followers = user.followers;
+        return followers >= 3000;
+      });
+    });
+
+    await exportToGoogleSheet(allUserData);
+
+    res.json({ message: "Data exported successfully" });
+    // res.json(allUserData);
   } catch (error) {
     console.log(error);
     next(error);

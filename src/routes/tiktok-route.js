@@ -21,6 +21,7 @@ tiktokRoute.post(
 tiktokRoute.post("/update-user-data", tiktokController.updateUserData);
 tiktokRoute.post("/update-all-user-data", tiktokController.updateAllUserData);
 tiktokRoute.get("/list-all-users", tiktokController.listAllUsers);
+tiktokRoute.get("/get-data-for-export", tiktokController.getDataForExport);
 
 tiktokRoute.post("/test-tag", tiktokController.testTag);
 
